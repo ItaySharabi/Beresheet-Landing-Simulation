@@ -8,6 +8,7 @@ public class Simulator /*extends JFrame*/{
 
         SpaceShip beresheet = new SpaceShip();
 
+        // Start landing simulation
         beresheet.missionStart();
     }
 }
