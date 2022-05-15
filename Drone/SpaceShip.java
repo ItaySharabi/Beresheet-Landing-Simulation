@@ -3,6 +3,8 @@ package Drone;
 import simulation.Moon;
 import simulation.PID;
 
+import java.util.PrimitiveIterator;
+
 /**
  * SpaceShip class:
  * Represents the Israeli `Bereshit` Spaceship, which was sent
@@ -50,7 +52,6 @@ public class SpaceShip {
     private final Thread mainLoop;
 
     public SpaceShip() {
-        MainEngine mainEngine = new MainEngine(this);
         this.state = State.PreparingToLand;
         mainLoop = new Thread(this::main_loop);
     }
@@ -66,19 +67,19 @@ public class SpaceShip {
         return t/weight;
     }
 
-    private PID NN_PID, ANG_PID;
+    private PID pid;
 
     private void main_loop() {
-//        NN_PID = new PID(1000, 0, 1);
-//        ANG_PID = new PID(1000, -2, 2);
+        pid = new PID(0, 0, 1);
         while(alt>0) {
-            // over 2 km above the ground
             if(alt>2000) {	// maintain a vertical speed of [20-25] m/s
-                if(vs > 20) {NN+=0.003*dt;} // more power for braking
-                if(vs < 25) {NN-=0.003*dt;} // less power for braking
+            // over 2 km above the ground
+
+                if(vs > 25) {NN+=0.3;} // more power for braking
+                if(vs < 20) {NN-=0.3;} // less power for braking
             }
             else {
-                // lower than 2 km - horizontal speed should be close to zero
+            // lower than 2 km - horizontal speed should be close to zero
                 if(ang > 3) {ang-=3;} // rotate to vertical position.
                 else {ang = 0;}
                 NN=0.5; // brake slowly, a proper PID controller here is needed!
@@ -131,7 +132,7 @@ public class SpaceShip {
             System.out.printf("| %.2f ", dist);
             System.out.printf("| %.2f ", alt);
             System.out.printf("| %.2f ", ang);
-            System.out.printf("| %.2f ", ang);
+            System.out.printf("| %.2f ", weight);
             System.out.printf("| %.2f ", NN);
             System.out.printf("| %.2f ", fuel);
             System.out.printf("| %.2f |\n", acc);
